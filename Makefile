@@ -15,7 +15,12 @@ test:
 	docker run -v /var/run/docker.sock:/var/run/docker.sock -it ahmedalhulaibi/maas:latest https://github.com/ahmedalhulaibi/maas.git
 	@echo "Test complete"
 
-build: clean
+dep:
+	@echo "Dependencies installation started"
+	@echo $(PLATFORM)
+	@echo "Dependencies installation complete"
+
+build: clean dep
 	@echo "Build started"
 	docker build . -t ahmedalhulaibi/maas:latest
 	@echo "Build complete"
