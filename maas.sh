@@ -2,10 +2,10 @@
 
 git_url=$1
 
-rm -rf gitmaas
+rm -rf gitmaas | sed -e 's/^/[maaslog]: /'
 
-git clone $git_url gitmaas
+git clone $git_url gitmaas | sed -e 's/^/[maaslog]: /'
 
 cd gitmaas
 
-make
+make | sed -e 's/^/[maaslog]: /'
