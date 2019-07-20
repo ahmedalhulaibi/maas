@@ -1,6 +1,6 @@
 FROM docker:latest
 
-RUN apk add --no-cache --update make git jq zip docker bash
+RUN apk add --no-cache --update make git docker bash
 
 WORKDIR /
 
