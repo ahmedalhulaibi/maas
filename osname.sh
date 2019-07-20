@@ -19,7 +19,7 @@ if [ "${OS}" = "Linux" ] ; then
     if [ -f /etc/UnitedLinux-release ] ; then
         DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
     fi
-elif
+else
     DIST="unknown"
 fi
 
