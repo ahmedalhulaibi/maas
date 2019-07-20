@@ -1,11 +1,13 @@
 tag=$(shell git describe --tags | sed "s/v//g")
 gitroot=$(shell git rev-parse --show-toplevel)
+PLATFORM := $(shell ./osname.sh)
 
 default: build test
 
 clean:
 	@echo "Clean started"
 	sleep 1
+	@echo $(PLATFORM)
 	@echo "Clean complete"
 
 test:
