@@ -17,10 +17,15 @@ test:
 
 dep:
 	@echo "Dependencies installation started"
-	@echo "OS=$(PLATFORM)"
-	ifeq($(PLATFORM),Alpine)
-		apk add --no-cache --update jq zip
-	endif
+	@echo "$(PLATFORM)"
+    ifeq ($(PLATFORM),Alpine)
+	@echo "Hello Alpine" 
+	@apk add --no-cache --update jq zip
+    endif
+    ifeq ($(PLATFORM),Debian)
+	@echo "Hello Debian" 
+	@apt-get update && apt-get install -y jq zip
+    endif
 	@echo "Dependencies installation complete"
 
 build: clean dep
