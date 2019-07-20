@@ -1,6 +1,6 @@
-FROM ubuntu:latest
+FROM alpine:latest
 
-RUN apt-get update && apt-get install make git jq zip -y
+RUN apk add --update make git jq zip
 
 WORKDIR /
 
