@@ -20,11 +20,11 @@ dep:
 	@echo "$(PLATFORM)"
     ifeq ($(PLATFORM),Alpine)
 	@echo "Hello Alpine" 
-	@apk add --no-cache --update jq zip
+	#@apk add --no-cache --update jq zip
     endif
     ifeq ($(PLATFORM),Debian)
 	@echo "Hello Debian" 
-	@apt-get update && apt-get install -y jq zip
+	#@apt-get update && apt-get install -y jq zip
     endif
 	@echo "Dependencies installation complete"
 
