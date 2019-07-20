@@ -9,4 +9,5 @@ clean:
 	@echo "Clean done"
 
 build: clean
+	docker build . -t ahmedalhulaibi/maas:latest
 	@echo "Build complete"
