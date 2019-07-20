@@ -2,7 +2,7 @@ tag=$(shell git describe --tags | sed "s/v//g")
 gitroot=$(shell git rev-parse --show-toplevel)
 PLATFORM := $(shell ./osname.sh)
 
-default: build test
+default: build
 
 clean:
 	@echo "Clean started"
