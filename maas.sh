@@ -1,7 +1,10 @@
 #! /usr/bin/env bash
 
 git_url=$1
-allArgs="${@:2}"
+echo "git URL:" $git_url
+
+makeArgs="${@:2}"
+echo "Make args: ${makeArgs[@]}"
 
 rm -rf gitmaas | sed -e 's/^/[maaslog]: /'
 
@@ -9,4 +12,4 @@ git clone $git_url gitmaas | sed -e 's/^/[maaslog]: /'
 
 cd gitmaas
 
-make $allArgs | sed -e 's/^/[maaslog]: /'
+make $makeArgs | sed -e 's/^/[maaslog]: /'
