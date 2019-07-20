@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add --update make git jq zip
+RUN apk add --update make git jq zip docker
 
 WORKDIR /
 
