@@ -42,4 +42,4 @@ Run `make build test` which will build the Docker image for make-as-a-service
 
 ## Roadmap
 
-- [ ] Openfaas template
+- [ ] Openfaas template and/or function
