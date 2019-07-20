@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add --update make git jq zip docker
+RUN apk add --no-cache --update make git jq zip docker bash
 
 WORKDIR /
 
