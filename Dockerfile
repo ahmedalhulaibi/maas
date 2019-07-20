@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM docker:latest
 
 RUN apk add --no-cache --update make git jq zip docker bash
 
