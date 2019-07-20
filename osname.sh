@@ -14,7 +14,8 @@ if [ "${OS}" = "Linux" ] ; then
         DIST='Mandrake'
     elif [ -f /etc/debian_version ] ; then
         DIST="Debian"
-
+    elif [ -f /etc/alpine-release ] ; then
+        DIST="Alpine"
     fi
     if [ -f /etc/UnitedLinux-release ] ; then
         DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
