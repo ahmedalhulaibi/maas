@@ -1,8 +1,0 @@
-provider:
-  name: openfaas
-  gateway: http://127.0.0.1:8080
-functions:
-  maas:
-    lang: dockerfile
-    handler: ./maas-faas
-    image: ahmedalhulaibi/maas-faas:latest
