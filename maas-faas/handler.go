@@ -9,6 +9,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 )
 
@@ -39,7 +40,15 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		Entrypoint: []string{"maas.sh", gitURL},
 		Tty:        true,
 		Volumes:    map[string]struct{}{"/var/run/docker.sock:/var/run/docker.sock": {}},
-	}, nil, nil, "")
+	}, &container.HostConfig{
+		Mounts: []mount.Mount{
+			{
+				Type:   mount.TypeBind,
+				Source: "/var/run/docker.sock",
+				Target: "/var/run/docker.sock",
+			},
+		},
+	}, nil, "")
 
 	if err != nil {
 		handleErr(http.StatusInternalServerError, err.Error(), w)
