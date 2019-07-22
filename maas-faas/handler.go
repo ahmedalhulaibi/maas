@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
@@ -21,6 +22,9 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	makeCmds := []string{"maas.sh", gitURL}
+	makeCmds = append(makeCmds, r.URL.Query()["makecmd"]...)
+
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -37,9 +41,8 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image:      "ahmedalhulaibi/maas:latest",
-		Entrypoint: []string{"maas.sh", gitURL},
+		Entrypoint: makeCmds,
 		Tty:        true,
-		Volumes:    map[string]struct{}{"/var/run/docker.sock:/var/run/docker.sock": {}},
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
 			{
@@ -87,6 +90,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleErr(status int, message string, w http.ResponseWriter) {
+	log.Println(status, message)
 	w.WriteHeader(status)
 	w.Write([]byte(message))
 }
