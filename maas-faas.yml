@@ -1,0 +1,14 @@
+provider:
+  name: openfaas
+  gateway: http://192.168.99.100:31112
+functions:
+  maas-faas:
+    lang: golang-middleware
+    handler: ./maas-faas
+    image: ahmedalhulaibi/maas-faas:latest
+    environment:
+      DOCKER_HOST: tcp://172.17.0.1:2375
+      DOCKER_TLS_VERIFY: 0
+      DOCKER_API_VERSION: 1.38
+      DOCKER_SOCK: /var/run/docker.sock
+      write_debug: true
