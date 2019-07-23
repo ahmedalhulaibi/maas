@@ -22,6 +22,7 @@ verify-tools:
 	$(if $(shell PATH=$(PATH) which faas-cli),,$(error "No faas-cli in PATH. Run `curl -sSL https://cli.openfaas.com | sudo -E sh` or `brew install faas-cli`"))
 	@echo "Done verifying tools are installed"
 
+.PHONY: install-tools
 install-tools:
 	@echo "Installing tools. Platform identified as $(PLATFORM)"
 	@echo "Installing faas-cli"
