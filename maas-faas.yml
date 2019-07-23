@@ -12,3 +12,5 @@ functions:
       DOCKER_API_VERSION: 1.38
       DOCKER_SOCK: /var/run/docker.sock
       write_debug: true
+      read_timeout: 60s
+      write_timeout: 60s
