@@ -37,14 +37,14 @@ install-tools:
 	@echo "Done installing tools"
 
 dep: verify-tools
-	faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
+	@faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
 
-Dockerfile: clean dep Dockerfile
+Dockerfile: clean dep
 	@echo "Building image from Dockerfile"
 	docker build . -t ahmedalhulaibi/maas:latest
 	@echo "Building image complete"
 
-maas-faas.yml: clean dep maas-faas.yml
+maas-faas.yml: clean dep
 	@echo "Building openfaas fn from maas-faas.yml"
 	faas-cli build -f ./maas-faas.yml
 	@echo  "Building openfaas fn complete"
