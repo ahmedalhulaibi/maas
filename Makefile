@@ -14,26 +14,31 @@ clean:
 .PHONY: run
 run:
 	@echo "Run started"
-	docker run -v /var/run/docker.sock:/var/run/docker.sock -it ahmedalhulaibi/maas:latest https://github.com/ahmedalhulaibi/maas.git
+	docker run -v /var/run/docker.sock:/var/run/docker.sock -it ahmedalhulaibi/maas:latest https://github.com/ahmedalhulaibi/maas.git install-tools build
 	@echo "Run complete"
 
-dep:
-	@echo "Verifying dependencies are installed"
+verify-tools:
+	@echo "Verifying tools are installed"
+	$(if $(shell PATH=$(PATH) which faas-cli),,$(error "No faas-cli in PATH. Run `curl -sSL https://cli.openfaas.com | sudo -E sh` or `brew install faas-cli`"))
+	@echo "Done verifying tools are installed"
+
+install-tools:
 	@echo "$(PLATFORM)"
     ifeq ($(PLATFORM),Alpine)
 	@echo "Hello Alpine" 
-	$(if $(shell PATH=$(PATH) which faas-cli),,$(error "No faas-cli in PATH. Run `curl -sSL https://cli.openfaas.com | sudo -E sh`"))
+	$(if $(shell PATH=$(PATH) which faas-cli),$(echo faas-cli already installed),$(curl -sSL https://cli.openfaas.com | sudo -E sh))
     endif
     ifeq ($(PLATFORM),Debian)
 	@echo "Hello Debian"
-	$(if $(shell PATH=$(PATH) which faas-cli),,$(error "No faas-cli in PATH. Run `curl -sSL https://cli.openfaas.com | sudo -E sh`"))
+	$(if $(shell PATH=$(PATH) which faas-cli),$(echo faas-cli already installed),$(curl -sSL https://cli.openfaas.com | sudo -E sh))
     endif
     ifeq ($(PLATFORM),Darwin)
 	@echo "Hello Darwin" 
-	$(if $(shell PATH=$(PATH) which faas-cli),,$(error "No faas-cli in PATH. Run `curl -sSL https://cli.openfaas.com | sudo -E sh` or `brew install faas-cli`"))
+	$(if $(shell PATH=$(PATH) which faas-cli),$(echo faas-cli already installed),$(if $(shell PATH=$(PATH) which brew),brew install faas-cli,$(curl -sSL https://cli.openfaas.com | sudo -E sh)))
     endif
-	@echo "Dependencies check complete"
-	#faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
+
+dep: verify-tools
+	faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
 
 Dockerfile: clean dep Dockerfile
 	@echo "Building image from Dockerfile"
