@@ -36,6 +36,7 @@ install-tools:
 	@echo "Done installing tools"
 
 dep: verify-tools
+	cd maas-faas && GO111MODULE=on go mod vendor -v
 	faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
 
 Dockerfile: clean dep
