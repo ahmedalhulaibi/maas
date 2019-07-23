@@ -26,13 +26,13 @@ install-tools:
 	@echo "Installing tools. Platform identified as $(PLATFORM)"
     ifeq ($(PLATFORM),Alpine)
 	@echo "Installing faas-cli"
-	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(curl -sSL https://cli.openfaas.com | sh))
+	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(shell curl -sSL https://cli.openfaas.com | sh))
     endif
     ifeq ($(PLATFORM),Debian)
-	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(curl -sSL https://cli.openfaas.com | sudo -E sh))
+	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(shell curl -sSL https://cli.openfaas.com | sudo -E sh))
     endif
     ifeq ($(PLATFORM),Darwin)
-	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(if $(shell PATH=$(PATH) which brew),brew install faas-cli,$(curl -sSL https://cli.openfaas.com | sudo -E sh)))
+	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(if $(shell PATH=$(PATH) which brew),brew install faas-cli,$(shell curl -sSL https://cli.openfaas.com | sudo -E sh)))
     endif
 	@echo "Done installing tools"
 
