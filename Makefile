@@ -36,7 +36,7 @@ install-tools:
 	@echo "Done installing tools"
 
 dep: verify-tools
-	@faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
+	faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
 
 Dockerfile: clean dep
 	@echo "Building image from Dockerfile"
