@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 PLATFORM=$1
 echo "install-tools/faas-cli.sh running"
 if [ -x "$(command -v faas-cli)" ]; then
