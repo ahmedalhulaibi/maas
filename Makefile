@@ -55,4 +55,5 @@ publish-image: build
 	@echo "Publishing image to dockerhub"
 	docker push ahmedalhulaibi/maas:latest
 	@echo "Publishing openfaas fn"
+	faas-cli push -f ./maas-faas.yml
 	@echo "Publishing complete"
