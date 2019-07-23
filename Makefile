@@ -8,7 +8,6 @@ default: build
 clean:
 	@echo "Clean started"
 	@echo $(PLATFORM)
-	faas-cli remove -f maas-faas.yml
 	@echo "Clean complete"
 
 .PHONY: run
@@ -57,3 +56,10 @@ publish-image: build
 	@echo "Publishing openfaas fn"
 	faas-cli push -f ./maas-faas.yml
 	@echo "Publishing complete"
+
+remove-faas: verify-tools
+	faas-cli remove -f maas-faas.yml
+
+
+deploy: remove-faas
+	faas-cli deploy -f ./maas-faas.yml
