@@ -27,7 +27,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	statusReq := r.URL.Query().Get("container")
-
+	//if container query param present, get container status + logs
 	if statusReq != "" {
 		output, err := GetContainerStatus(ctx, statusReq, cli)
 		if err != nil {
@@ -40,6 +40,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//start a build job
 	gitURL := r.URL.Query().Get("giturl")
 
 	if gitURL == "" {
@@ -50,9 +51,11 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	makeCmds := []string{"maas.sh", gitURL}
 	makeCmds = append(makeCmds, r.URL.Query()["makecmd"]...)
 
-	if output, err := ScheduleContainer(ctx, cli, gitURL, makeCmds); err == nil {
+	//start container and write container ID (SHA) to response body
+	if containerID, err := ScheduleContainer(ctx, cli, gitURL, makeCmds); err == nil {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(output))
+		//
+		w.Write([]byte(containerID))
 	} else {
 		handleErr(http.StatusBadRequest, err.Error(), w)
 	}
