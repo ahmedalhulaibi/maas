@@ -26,7 +26,7 @@ verify-tools:
 install-tools:
 	@echo "Installing tools. Platform identified as $(PLATFORM)"
 	@echo "Installing faas-cli"
-	$(shell $(install-tools/faas-cli.sh) $(PLATFORM))
+	install-tools/faas-cli.sh $(PLATFORM)
     ifeq ($(PLATFORM),Alpine)
     endif
     ifeq ($(PLATFORM),Debian)
