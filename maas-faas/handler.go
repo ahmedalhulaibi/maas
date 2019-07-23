@@ -59,12 +59,24 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetContainerStatus(ctx context.Context, containerID string, cli *client.Client) ([]byte, error) {
+
 	outBuff := new(bytes.Buffer)
+	containerJSON, err := cli.ContainerInspect(ctx, containerID)
+	if err != nil {
+		return outBuff.Bytes(), err
+	}
+
+	outBuff.WriteString(fmt.Sprintf("Container started at: %s", containerJSON.State.StartedAt))
+
 	out, err := cli.ContainerLogs(ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err == nil {
 		_, err = stdcopy.StdCopy(outBuff, outBuff, out)
 	}
-	return outBuff.Bytes(), nil
+	if !containerJSON.State.Running && !containerJSON.State.Paused {
+		outBuff.WriteString(fmt.Sprintf("Container finished at: %s", containerJSON.State.FinishedAt))
+		outBuff.WriteString(fmt.Sprintln("Container exit code: ", containerJSON.State.ExitCode))
+	}
+	return outBuff.Bytes(), err
 }
 
 func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, makeCmds []string) (string, error) {
