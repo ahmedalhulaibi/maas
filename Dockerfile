@@ -1,6 +1,6 @@
 FROM docker:latest
 
-RUN apk add --no-cache --update make git docker bash
+RUN apk add --no-cache --update make git docker bash curl
 
 WORKDIR /
 
