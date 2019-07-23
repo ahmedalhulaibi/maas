@@ -25,6 +25,7 @@ verify-tools:
 install-tools:
 	@echo "Installing tools. Platform identified as $(PLATFORM)"
     ifeq ($(PLATFORM),Alpine)
+	@echo "Installing faas-cli"
 	$(if $(shell PATH=$(PATH) which faas-cli),echo "faas-cli already installed",$(curl -sSL https://cli.openfaas.com | sh))
     endif
     ifeq ($(PLATFORM),Debian)
