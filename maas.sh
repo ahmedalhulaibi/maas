@@ -12,4 +12,9 @@ git clone $git_url gitmaas | sed -e 's/^/[maaslog]: /'
 
 cd gitmaas
 
-make $makeArgs | sed -e 's/^/[maaslog]: /'
+make $makeArgs > .make.log
+makerc=$?
+
+cat .make.log | sed -e 's/^/[maaslog]: /'
+
+exit $makerc
