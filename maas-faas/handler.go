@@ -60,7 +60,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 func GetContainerStatus(ctx context.Context, containerID string, cli *client.Client) ([]byte, error) {
 	outBuff := new(bytes.Buffer)
-	out, err := cli.ContainerLogs(ctx, containerID, types.ContainerLogsOptions{ShowStdout: true})
+	out, err := cli.ContainerLogs(ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err == nil {
 		_, err = stdcopy.StdCopy(outBuff, outBuff, out)
 	}
