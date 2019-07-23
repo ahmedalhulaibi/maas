@@ -48,63 +48,22 @@ Deploy the `maas-faas` function using `maas-faas.yml`:
 faas-cli up -f ./maas-faas.yml
 ```
 
-Test using curl command. Pass the git repo URL via the `giturl` query parameter.
+To start a build use call the maas-faas endpoint and pass the git repo URL via the `giturl` query parameter. This will return a container ID where your build job will run. You can specify which make targets to build using the `makecmd` query parameter.
 
 ```
-http://192.168.99.100:31112/function/maas-faas?giturl=https://github.com/ahmedalhulaibi/maas.git
+$ curl http://192.168.99.100:31112/function/maas-faas?giturl=https://github.com/ahmedalhulaibi/maas.git&makecmd=install-tools&makecmd=build
+
+db8e5686f368a58e08e4376d261c03bd758618c30b327e15d1c2daf1f8991928
+```
+To query the status of your build job call the same endpoint with the `container` query parameter
+```
+$ curl http://192.168.99.100:31112/function/maas-faas?container=db8e5686f368a58e08e4376d261c03bd758618c30b327e15d1c2daf1f8991928
+
+Container started at: 2019-07-23T20:11:38.156508058Z
+git URL: https://github.com/ahmedalhulaibi/maas.git
+Make args: install-tools build
 Cloning into 'gitmaas'...
-remote: Enumerating objects: 94, done.
-remote: Counting objects:   1% (1/94)   
 ...
-remote: Counting objects:  97% (92/94)   
-remote: Counting objects:  98% (93/94)   
-remote: Counting objects: 100% (94/94)   
-remote: Counting objects: 100% (94/94), done.
-remote: Compressing objects:   1% (1/66)   
-...   
-remote: Compressing objects:  96% (64/66)   
-remote: Compressing objects:  98% (65/66)   
-remote: Compressing objects: 100% (66/66)   
-remote: Compressing objects: 100% (66/66), done.
-remote: Total 94 (delta 43), reused 75 (delta 26), pack-reused 0
-Unpacking objects:   1% (1/94)
-...
-Unpacking objects:  97% (92/94)
-Unpacking objects:  98% (93/94)
-Unpacking objects: 100% (94/94)
-Unpacking objects: 100% (94/94), done.
-[maaslog]: Clean started
-[maaslog]: sleep 1
-[maaslog]: Alpine
-[maaslog]: Clean complete
-[maaslog]: Dependencies installation started
-[maaslog]: Alpine
-[maaslog]: Hello Alpine
-[maaslog]: #@apk add --no-cache --update jq zip
-[maaslog]: Dependencies installation complete
-[maaslog]: Build started
-[maaslog]: docker build . -t ahmedalhulaibi/maas:latest
-[maaslog]: Sending build context to Docker daemon  219.1kB
-
-
-[maaslog]: Step 1/6 : FROM docker:latest
-[maaslog]:  ---> e1ee9bd2e980
-[maaslog]: Step 2/6 : RUN apk add --no-cache --update make git docker bash
-[maaslog]:  ---> Using cache
-[maaslog]:  ---> 9ba8ddc8cbf3
-[maaslog]: Step 3/6 : WORKDIR /
-[maaslog]:  ---> Using cache
-[maaslog]:  ---> ae24582cef0d
-[maaslog]: Step 4/6 : COPY ./maas.sh /usr/local/bin/maas.sh
-[maaslog]:  ---> Using cache
-[maaslog]:  ---> 66a0660c6231
-[maaslog]: Step 5/6 : RUN chmod +x /usr/local/bin/maas.sh
-[maaslog]:  ---> Using cache
-[maaslog]:  ---> 30bfccccadb3
-[maaslog]: Step 6/6 : ENTRYPOINT [ "maas.sh" ]
-[maaslog]:  ---> Using cache
-[maaslog]:  ---> 13af4d55c078
-[maaslog]: Successfully built 13af4d55c078
-[maaslog]: Successfully tagged ahmedalhulaibi/maas:latest
-[maaslog]: Build complete
+Container finished at: 2019-07-23T20:13:55.553940387Z
+Container exit code:  0
 ```
