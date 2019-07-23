@@ -66,14 +66,14 @@ func GetContainerStatus(ctx context.Context, containerID string, cli *client.Cli
 		return outBuff.Bytes(), err
 	}
 
-	outBuff.WriteString(fmt.Sprintf("Container started at: %s", containerJSON.State.StartedAt))
+	outBuff.WriteString(fmt.Sprintf("Container started at: %s\n", containerJSON.State.StartedAt))
 
 	out, err := cli.ContainerLogs(ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err == nil {
 		_, err = stdcopy.StdCopy(outBuff, outBuff, out)
 	}
 	if !containerJSON.State.Running && !containerJSON.State.Paused {
-		outBuff.WriteString(fmt.Sprintf("Container finished at: %s", containerJSON.State.FinishedAt))
+		outBuff.WriteString(fmt.Sprintf("Container finished at: %s\n", containerJSON.State.FinishedAt))
 		outBuff.WriteString(fmt.Sprintln("Container exit code: ", containerJSON.State.ExitCode))
 	}
 	return outBuff.Bytes(), err
