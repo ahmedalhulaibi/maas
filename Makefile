@@ -23,19 +23,17 @@ verify-tools:
 	@echo "Done verifying tools are installed"
 
 install-tools:
-	@echo "$(PLATFORM)"
+	@echo "Installing tools. Platform identified as $(PLATFORM)"
     ifeq ($(PLATFORM),Alpine)
-	@echo "Hello Alpine" 
 	$(if $(shell PATH=$(PATH) which faas-cli),$(echo faas-cli already installed),$(curl -sSL https://cli.openfaas.com | sudo -E sh))
     endif
     ifeq ($(PLATFORM),Debian)
-	@echo "Hello Debian"
 	$(if $(shell PATH=$(PATH) which faas-cli),$(echo faas-cli already installed),$(curl -sSL https://cli.openfaas.com | sudo -E sh))
     endif
     ifeq ($(PLATFORM),Darwin)
-	@echo "Hello Darwin" 
 	$(if $(shell PATH=$(PATH) which faas-cli),$(echo faas-cli already installed),$(if $(shell PATH=$(PATH) which brew),brew install faas-cli,$(curl -sSL https://cli.openfaas.com | sudo -E sh)))
     endif
+	@echo "Done installing tools"
 
 dep: verify-tools
 	faas-cli template pull https://github.com/openfaas-incubator/golang-http-template
