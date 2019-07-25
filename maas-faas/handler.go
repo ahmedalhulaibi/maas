@@ -4,12 +4,37 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"html/template"
+
 	"github.com/docker/docker/client"
 )
+
+var (
+	allContainersTpl *template.Template
+)
+
+func init() {
+	allContainersPage := ` 
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Maas Jobs</title>
+	</head>
+	<body>
+		{{range .}}<div>{{ .ID}} {{ .StartedAt}} {{ .FinishedAt}} {{ .RC}}</div>{{else}}<div><strong>no rows</strong></div>{{end}}
+	</body>
+</html>`
+	var err error
+	if allContainersTpl, err = template.New("webpage").Parse(allContainersPage); err != nil {
+		log.Fatal(err)
+	}
+}
 
 func Handle(w http.ResponseWriter, r *http.Request) {
 
@@ -37,19 +62,25 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	//start a build job
 	gitURL := r.URL.Query().Get("giturl")
 
-	if gitURL == "" {
-		handleErr(http.StatusBadRequest, "Missing 'giturl' query parameter", w)
+	if gitURL != "" {
+		makeCmds := []string{"maas.sh", gitURL}
+		makeCmds = append(makeCmds, r.URL.Query()["makecmd"]...)
+
+		//start container and write container ID (SHA) to response body
+		if containerID, err := ScheduleContainer(ctx, cli, gitURL, makeCmds); err == nil {
+			w.WriteHeader(http.StatusOK)
+			//
+			w.Write([]byte(containerID))
+		} else {
+			handleErr(http.StatusBadRequest, err.Error(), w)
+		}
 		return
 	}
 
-	makeCmds := []string{"maas.sh", gitURL}
-	makeCmds = append(makeCmds, r.URL.Query()["makecmd"]...)
-
-	//start container and write container ID (SHA) to response body
-	if containerID, err := ScheduleContainer(ctx, cli, gitURL, makeCmds); err == nil {
-		w.WriteHeader(http.StatusOK)
-		//
-		w.Write([]byte(containerID))
+	if allContainers, err := AllContainers(ctx, cli); err == nil {
+		if errTpl := allContainersTpl.Execute(w, allContainers); errTpl != nil {
+			handleErr(http.StatusBadRequest, errTpl.Error(), w)
+		}
 	} else {
 		handleErr(http.StatusBadRequest, err.Error(), w)
 	}
