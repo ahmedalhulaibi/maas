@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
+
+	"github.com/docker/docker/api/types/filters"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -49,7 +52,9 @@ func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, m
 		Entrypoint: makeCmds,
 		Tty:        false,
 		Labels: map[string]string{
-			"maas": "",
+			"maas":          "true",
+			"maas.gitURL":   gitURL,
+			"maas.makecmds": strings.Join(makeCmds, ","),
 		},
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
@@ -72,4 +77,35 @@ func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, m
 	}
 
 	return resp.ID, err
+}
+
+type ContainerStatusRecord struct {
+	ID         string
+	StartedAt  string
+	FinishedAt string
+	GitURL     string
+	Targets    string
+	RC         int
+}
+
+func AllContainers(ctx context.Context, cli *client.Client) ([]ContainerStatusRecord, error) {
+	filterOpts := filters.NewArgs()
+	filterOpts.Add("label", "maas")
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: filterOpts})
+	containerStatusRecs := []ContainerStatusRecord{}
+	for _, container := range containers {
+
+		containerJSON, err := cli.ContainerInspect(ctx, container.ID)
+		if err != nil {
+			return nil, err
+		}
+		newRec := ContainerStatusRecord{
+			ID:         container.ID,
+			StartedAt:  containerJSON.State.StartedAt,
+			FinishedAt: containerJSON.State.FinishedAt,
+			RC:         containerJSON.State.ExitCode,
+		}
+		containerStatusRecs = append(containerStatusRecs, newRec)
+	}
+	return containerStatusRecs, err
 }
