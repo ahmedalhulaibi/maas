@@ -50,7 +50,7 @@ maas-faas.yml: clean dep
 
 build: Dockerfile maas-faas.yml
 
-publish-image: build
+publish-image:
 	@echo "Publishing image to dockerhub"
 	docker push ahmedalhulaibi/maas:latest
 	@echo "Publishing openfaas fn"
