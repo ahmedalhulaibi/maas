@@ -52,7 +52,7 @@ func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, m
 		Entrypoint: makeCmds,
 		Tty:        false,
 		Labels: map[string]string{
-			"maas":          "true",
+			"maas":          "",
 			"maas.gitURL":   gitURL,
 			"maas.makecmds": strings.Join(makeCmds, ","),
 		},
@@ -91,7 +91,8 @@ type ContainerStatusRecord struct {
 func AllContainers(ctx context.Context, cli *client.Client) ([]ContainerStatusRecord, error) {
 	filterOpts := filters.NewArgs()
 	filterOpts.Add("label", "maas")
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: filterOpts})
+
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: filterOpts, All: true})
 	containerStatusRecs := []ContainerStatusRecord{}
 	for _, container := range containers {
 
