@@ -25,9 +25,52 @@ func init() {
 	<head>
 		<meta charset="UTF-8">
 		<title>Maas Jobs</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var elems = document.querySelectorAll('.collapsible');
+			var instances = M.Collapsible.init(elems);
+		  });
+		</script>
+
 	</head>
 	<body>
-		{{range .}}<div>{{ .ID}} {{ .StartedAt}} {{ .FinishedAt}} {{ .RC}}</div>{{else}}<div><strong>no rows</strong></div>{{end}}
+		<ul class="collapsible">
+		{{range .}}
+			<li>
+				<div class="collapsible-header"><i class="material-icons">build</i>Container ID: {{ .ID}}</div>
+				<div class="collapsible-body">
+					<div>
+						<div><strong>Started At:</strong> {{ .StartedAt}}</div>
+						<div><strong>Finished At:</strong> {{ .FinishedAt}}</div>
+						<div><strong>Exit Code:</strong> {{ .RC}}</div>
+					</div>
+				</div>
+			  </li>
+			  {{end}}
+		</ul>
+
+		{{range .}}
+		<div class="row">
+    		<div class="col s12 m6">
+      			<div class="card blue-grey darken-1">
+        			<div class="card-content white-text">
+          				<span class="card-title"><strong>Container ID:</strong>{{ .ID}}</span>
+						  <div><strong>Started At:</strong> {{ .StartedAt}}</div>
+						  <div><strong>Finished At:</strong> {{ .FinishedAt}}</div>
+						  <div><strong>Exit Code:</strong> {{ .RC}}</div>
+        			</div>
+        			<div class="card-action">
+          				<a href="#">This is a link</a>
+          				<a href="#">This is a link</a>
+        			</div>
+      			</div>
+    		</div>
+  		</div>{{end}}
+
+    
 	</body>
 </html>`
 	var err error
