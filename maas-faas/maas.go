@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/docker/docker/api/types/filters"
@@ -54,7 +55,7 @@ func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, m
 		Labels: map[string]string{
 			"maas":          "",
 			"maas.gitURL":   gitURL,
-			"maas.makecmds": strings.Join(makeCmds, ","),
+			"maas.makecmds": strings.Join(makeCmds[2:], ","),
 		},
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
@@ -84,7 +85,7 @@ type ContainerStatusRecord struct {
 	StartedAt  string
 	FinishedAt string
 	GitURL     string
-	Targets    string
+	Targets    []string
 	RC         int
 }
 
@@ -105,8 +106,14 @@ func AllContainers(ctx context.Context, cli *client.Client) ([]ContainerStatusRe
 			StartedAt:  containerJSON.State.StartedAt,
 			FinishedAt: containerJSON.State.FinishedAt,
 			RC:         containerJSON.State.ExitCode,
+			GitURL:     containerJSON.Config.Labels["maas.gitURL"],
+			Targets:    strings.Split(containerJSON.Config.Labels["maas.makecmds"], ","),
 		}
 		containerStatusRecs = append(containerStatusRecs, newRec)
 	}
+
+	sort.Slice(containerStatusRecs, func(i, j int) bool {
+		return containerStatusRecs[i].StartedAt > containerStatusRecs[j].StartedAt
+	})
 	return containerStatusRecs, err
 }
