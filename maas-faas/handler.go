@@ -48,7 +48,7 @@ func init() {
 						<div><strong>Started At:</strong> {{ .StartedAt}}</div>
 						<div><strong>Finished At:</strong> {{ .FinishedAt}}</div>
 						<div><strong>Exit Code:</strong> {{ .RC}}</div>
-						<a class="waves-effect waves-light btn" href="/function/maas-faas?container={{.ID}}">View Logs</a>
+						<a class="waves-effect waves-light btn" href="/function/maas-faas?container={{.ID}}" target="_blank">View Logs</a>
 					</div>
 				</div>
 			  </li>
