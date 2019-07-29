@@ -18,6 +18,7 @@ import (
 	"github.com/docker/docker/pkg/stdcopy"
 )
 
+/*ContainerStatus returns the stdout & stderr in a byte slice for the given container ID*/
 func ContainerStatus(ctx context.Context, containerID string, cli *client.Client) ([]byte, error) {
 
 	outBuff := new(bytes.Buffer)
@@ -39,6 +40,8 @@ func ContainerStatus(ctx context.Context, containerID string, cli *client.Client
 	return outBuff.Bytes(), err
 }
 
+/*ScheduleContainer starts a maas container on the docker host the given git URL and make targets
+and returns the corresponding container ID*/
 func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, makeCmds []string) (string, error) {
 
 	reader, err := cli.ImagePull(ctx, "ahmedalhulaibi/maas:latest", types.ImagePullOptions{})
@@ -80,6 +83,7 @@ func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, m
 	return resp.ID, err
 }
 
+/*ContainerStatusRecord wraps high-level container status info*/
 type ContainerStatusRecord struct {
 	ID         string
 	StartedAt  string
@@ -89,6 +93,7 @@ type ContainerStatusRecord struct {
 	RC         int
 }
 
+/*AllContainers returns a list of ContainerStatusRecord*/
 func AllContainers(ctx context.Context, cli *client.Client) ([]ContainerStatusRecord, error) {
 	filterOpts := filters.NewArgs()
 	filterOpts.Add("label", "maas")
