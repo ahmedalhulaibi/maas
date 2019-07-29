@@ -18,8 +18,8 @@ import (
 	"github.com/docker/docker/pkg/stdcopy"
 )
 
-/*ContainerStatus returns the stdout & stderr in a byte slice for the given container ID*/
-func ContainerStatus(ctx context.Context, containerID string, cli *client.Client) ([]byte, error) {
+/*JobStatus returns the stdout & stderr in a byte slice for the given container ID*/
+func JobStatus(ctx context.Context, containerID string, cli *client.Client) ([]byte, error) {
 
 	outBuff := new(bytes.Buffer)
 	containerJSON, err := cli.ContainerInspect(ctx, containerID)
@@ -40,9 +40,9 @@ func ContainerStatus(ctx context.Context, containerID string, cli *client.Client
 	return outBuff.Bytes(), err
 }
 
-/*ScheduleContainer starts a maas container on the docker host the given git URL and make targets
+/*ScheduleMaasJob starts a maas container on the docker host the given git URL and make targets
 and returns the corresponding container ID*/
-func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, makeCmds []string) (string, error) {
+func ScheduleMaasJob(ctx context.Context, cli *client.Client, gitURL string, makeCmds []string) (string, error) {
 
 	reader, err := cli.ImagePull(ctx, "ahmedalhulaibi/maas:latest", types.ImagePullOptions{})
 	if err != nil {
@@ -83,8 +83,8 @@ func ScheduleContainer(ctx context.Context, cli *client.Client, gitURL string, m
 	return resp.ID, err
 }
 
-/*ContainerStatusRecord wraps high-level container status info*/
-type ContainerStatusRecord struct {
+/*JobStatusRecord wraps high-level container status info*/
+type JobStatusRecord struct {
 	ID         string
 	StartedAt  string
 	FinishedAt string
@@ -93,20 +93,20 @@ type ContainerStatusRecord struct {
 	RC         int
 }
 
-/*AllContainers returns a list of ContainerStatusRecord*/
-func AllContainers(ctx context.Context, cli *client.Client) ([]ContainerStatusRecord, error) {
+/*JobList returns a list of ContainerStatusRecord*/
+func JobList(ctx context.Context, cli *client.Client) ([]JobStatusRecord, error) {
 	filterOpts := filters.NewArgs()
 	filterOpts.Add("label", "maas")
 
 	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: filterOpts, All: true})
-	containerStatusRecs := []ContainerStatusRecord{}
+	containerStatusRecs := []JobStatusRecord{}
 	for _, container := range containers {
 
 		containerJSON, err := cli.ContainerInspect(ctx, container.ID)
 		if err != nil {
 			return nil, err
 		}
-		newRec := ContainerStatusRecord{
+		newRec := JobStatusRecord{
 			ID:         container.ID,
 			StartedAt:  containerJSON.State.StartedAt,
 			FinishedAt: containerJSON.State.FinishedAt,

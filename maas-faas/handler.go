@@ -40,7 +40,7 @@ func init() {
 		<ul class="collapsible">
 		{{range .}}
 			<li>
-				<div class="collapsible-header"><i class="material-icons">build</i>Container ID: {{ .ID}}</div>
+				<div class="collapsible-header"><i class="material-icons">build</i>Job ID: {{ .ID}}</div>
 				<div class="collapsible-body">
 					<div>
 						<div><strong>Git URL:</strong> {{ .GitURL}}</div>
@@ -76,7 +76,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	statusReq := r.URL.Query().Get("container")
 	//if container query param present, get container status + logs
 	if statusReq != "" {
-		output, err := ContainerStatus(ctx, statusReq, cli)
+		output, err := JobStatus(ctx, statusReq, cli)
 		if err != nil {
 			handleErr(http.StatusInternalServerError, err.Error(), w)
 			return
@@ -95,7 +95,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		makeCmds = append(makeCmds, r.URL.Query()["makecmd"]...)
 
 		//start container and write container ID (SHA) to response body
-		if containerID, err := ScheduleContainer(ctx, cli, gitURL, makeCmds); err == nil {
+		if containerID, err := ScheduleMaasJob(ctx, cli, gitURL, makeCmds); err == nil {
 			w.WriteHeader(http.StatusOK)
 			//
 			w.Write([]byte(containerID))
@@ -105,8 +105,8 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if allContainers, err := AllContainers(ctx, cli); err == nil {
-		if errTpl := allContainersTpl.Execute(w, allContainers); errTpl != nil {
+	if allJobs, err := JobList(ctx, cli); err == nil {
+		if errTpl := allContainersTpl.Execute(w, allJobs); errTpl != nil {
 			handleErr(http.StatusBadRequest, errTpl.Error(), w)
 		}
 	} else {
